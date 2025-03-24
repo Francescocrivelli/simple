@@ -148,11 +148,14 @@ class SubscriptionService: ObservableObject {
     }
     
     private func updateSubscriptionInDatabase(transaction: Transaction) async {
-        guard let userId = SupabaseService.shared.client.auth.session?.user.id else {
-            return
-        }
-        
         do {
+            let session = try await SupabaseService.shared.client.auth.session
+            let userId = session.user.id
+            
+            guard !userId.isEmpty else {
+                return
+            }
+            
             // Check if subscription record exists
             let existingResponse = try await SupabaseService.shared.client
                 .from("app_subscriptions")
@@ -167,11 +170,11 @@ class SubscriptionService: ObservableObject {
             
             if existingSubscriptions.isEmpty {
                 // Create new subscription record
-                let subscriptionData: [String: Any] = [
+                let subscriptionData: [String: Encodable] = [
                     "user_id": userId,
                     "product_id": transaction.productID,
                     "status": status,
-                    "expires_at": transaction.expirationDate
+                    "expires_at": transaction.expirationDate as Any
                 ]
                 
                 try await SupabaseService.shared.client
@@ -180,10 +183,10 @@ class SubscriptionService: ObservableObject {
                     .execute()
             } else {
                 // Update existing subscription
-                let subscriptionData: [String: Any] = [
+                let subscriptionData: [String: Encodable] = [
                     "product_id": transaction.productID,
                     "status": status,
-                    "expires_at": transaction.expirationDate,
+                    "expires_at": transaction.expirationDate as Any,
                     "updated_at": Date()
                 ]
                 
