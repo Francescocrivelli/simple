@@ -61,7 +61,7 @@ class AuthService: ObservableObject {
                 let userData = try await supabase
                     .from("users")
                     .select()
-                    .eq("id", value: userId)
+                    .eq("id", value: uuid.uuidString)
                     .single()
                     .execute()
                 
@@ -69,18 +69,21 @@ class AuthService: ObservableObject {
                 let userPrefs = try await supabase
                     .from("user_preferences")
                     .select()
-                    .eq("user_id", value: userId)
+                    .eq("user_id", value: uuid.uuidString)
                     .single()
                     .execute()
                 
                 await MainActor.run {
                     do {
-                        if let userData = try userData.decoded() as User? {
-                            self.currentUser = userData
+                        let decoder = JSONDecoder()
+                        if let userDataJson = try? userData.data,
+                           let user = try? decoder.decode(User.self, from: userDataJson) {
+                            self.currentUser = user
                         }
                         
-                        if let userPrefs = try userPrefs.decoded() as UserPreferences? {
-                            self.userPreferences = userPrefs
+                        if let userPrefsJson = try? userPrefs.data,
+                           let prefs = try? decoder.decode(UserPreferences.self, from: userPrefsJson) {
+                            self.userPreferences = prefs
                         }
                     } catch {
                         print("Error decoding user data: \(error)")
@@ -107,7 +110,7 @@ class AuthService: ObservableObject {
             )
             
             // Check if user exists in the response
-            if authResponse.user.id.isEmpty == false {
+            if !authResponse.user.id.isEmpty {
                 await fetchUserData()
                 await MainActor.run {
                     self.isAuthenticated = true
@@ -136,7 +139,7 @@ class AuthService: ObservableObject {
             )
             
             // Check if user exists in the response
-            if authResponse.user.id.isEmpty == false {
+            if !authResponse.user.id.isEmpty {
                 await fetchUserData()
                 await MainActor.run {
                     self.isAuthenticated = true
@@ -178,7 +181,7 @@ class AuthService: ObservableObject {
         }
         
         do {
-            let preferences: [String: Encodable] = [
+            let preferences: [String: Any] = [
                 "user_id": userId,
                 "has_completed_onboarding": false,
                 "has_synced_contacts": false
@@ -197,11 +200,11 @@ class AuthService: ObservableObject {
     }
     
     func updateUserPreferences(hasCompletedOnboarding: Bool? = nil, hasSyncedContacts: Bool? = nil) async throws {
-        guard let preferencesId = userPreferences?.id.uuidString else {
+        guard !userPreferences?.id.uuidString.isEmpty ?? true else {
             throw AuthError.userNotFound
         }
         
-        var updates: [String: Encodable] = [:]
+        var updates: [String: Any] = [:]
         
         if let hasCompletedOnboarding = hasCompletedOnboarding {
             updates["has_completed_onboarding"] = hasCompletedOnboarding
@@ -219,7 +222,7 @@ class AuthService: ObservableObject {
             try await supabase
                 .from("user_preferences")
                 .update(updates)
-                .eq("id", value: preferencesId)
+                .eq("id", value: userPreferences?.id.uuidString)
                 .execute()
             
             await fetchUserData()

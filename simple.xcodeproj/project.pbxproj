@@ -6,43 +6,38 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXContainerItemProxy section */
-		130295FD2D8DD23D00912218 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 130295E42D8DD23D00912218 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 130295EB2D8DD23D00912218;
-			remoteInfo = simple;
-		};
-		130296072D8DD23D00912218 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 130295E42D8DD23D00912218 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 130295EB2D8DD23D00912218;
-			remoteInfo = simple;
-		};
-/* End PBXContainerItemProxy section */
+/* Begin PBXBuildFile section */
+		13C33C9A2D9111AC00A43391 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 13C33C992D9111AC00A43391 /* GoogleSignIn */; };
+		13C33C9C2D9111AC00A43391 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 13C33C9B2D9111AC00A43391 /* GoogleSignInSwift */; };
+		13C33C9F2D9111BE00A43391 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 13C33C9E2D9111BE00A43391 /* Auth */; };
+		13C33CA12D9111BE00A43391 /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = 13C33CA02D9111BE00A43391 /* Functions */; };
+		13C33CA32D9111BE00A43391 /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = 13C33CA22D9111BE00A43391 /* PostgREST */; };
+		13C33CA52D9111BE00A43391 /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = 13C33CA42D9111BE00A43391 /* Realtime */; };
+		13C33CA72D9111BE00A43391 /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 13C33CA62D9111BE00A43391 /* Storage */; };
+		13C33CA92D9111D100A43391 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 13C33CA82D9111D100A43391 /* Supabase */; };
+/* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		130295EC2D8DD23D00912218 /* simple.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = simple.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		130295FC2D8DD23D00912218 /* simpleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = simpleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		130296062D8DD23D00912218 /* simpleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = simpleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		13C33C752D910B0C00A43391 /* Exceptions for "simple" folder in "simple" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 130295EB2D8DD23D00912218 /* simple */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		130295EE2D8DD23D00912218 /* simple */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				13C33C752D910B0C00A43391 /* Exceptions for "simple" folder in "simple" target */,
+			);
 			path = simple;
-			sourceTree = "<group>";
-		};
-		130295FF2D8DD23D00912218 /* simpleTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = simpleTests;
-			sourceTree = "<group>";
-		};
-		130296092D8DD23D00912218 /* simpleUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = simpleUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -52,20 +47,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		130295F92D8DD23D00912218 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		130296032D8DD23D00912218 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				13C33C9A2D9111AC00A43391 /* GoogleSignIn in Frameworks */,
+				13C33C9C2D9111AC00A43391 /* GoogleSignInSwift in Frameworks */,
+				13C33CA72D9111BE00A43391 /* Storage in Frameworks */,
+				13C33CA12D9111BE00A43391 /* Functions in Frameworks */,
+				13C33CA92D9111D100A43391 /* Supabase in Frameworks */,
+				13C33CA52D9111BE00A43391 /* Realtime in Frameworks */,
+				13C33C9F2D9111BE00A43391 /* Auth in Frameworks */,
+				13C33CA32D9111BE00A43391 /* PostgREST in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,8 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				130295EE2D8DD23D00912218 /* simple */,
-				130295FF2D8DD23D00912218 /* simpleTests */,
-				130296092D8DD23D00912218 /* simpleUITests */,
+				13C33C942D9110E300A43391 /* Frameworks */,
 				130295ED2D8DD23D00912218 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -86,10 +74,15 @@
 			isa = PBXGroup;
 			children = (
 				130295EC2D8DD23D00912218 /* simple.app */,
-				130295FC2D8DD23D00912218 /* simpleTests.xctest */,
-				130296062D8DD23D00912218 /* simpleUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		13C33C942D9110E300A43391 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,56 +105,18 @@
 			);
 			name = simple;
 			packageProductDependencies = (
+				13C33C992D9111AC00A43391 /* GoogleSignIn */,
+				13C33C9B2D9111AC00A43391 /* GoogleSignInSwift */,
+				13C33C9E2D9111BE00A43391 /* Auth */,
+				13C33CA02D9111BE00A43391 /* Functions */,
+				13C33CA22D9111BE00A43391 /* PostgREST */,
+				13C33CA42D9111BE00A43391 /* Realtime */,
+				13C33CA62D9111BE00A43391 /* Storage */,
+				13C33CA82D9111D100A43391 /* Supabase */,
 			);
 			productName = simple;
 			productReference = 130295EC2D8DD23D00912218 /* simple.app */;
 			productType = "com.apple.product-type.application";
-		};
-		130295FB2D8DD23D00912218 /* simpleTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 130296132D8DD23D00912218 /* Build configuration list for PBXNativeTarget "simpleTests" */;
-			buildPhases = (
-				130295F82D8DD23D00912218 /* Sources */,
-				130295F92D8DD23D00912218 /* Frameworks */,
-				130295FA2D8DD23D00912218 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				130295FE2D8DD23D00912218 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				130295FF2D8DD23D00912218 /* simpleTests */,
-			);
-			name = simpleTests;
-			packageProductDependencies = (
-			);
-			productName = simpleTests;
-			productReference = 130295FC2D8DD23D00912218 /* simpleTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		130296052D8DD23D00912218 /* simpleUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 130296162D8DD23D00912218 /* Build configuration list for PBXNativeTarget "simpleUITests" */;
-			buildPhases = (
-				130296022D8DD23D00912218 /* Sources */,
-				130296032D8DD23D00912218 /* Frameworks */,
-				130296042D8DD23D00912218 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				130296082D8DD23D00912218 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				130296092D8DD23D00912218 /* simpleUITests */,
-			);
-			name = simpleUITests;
-			packageProductDependencies = (
-			);
-			productName = simpleUITests;
-			productReference = 130296062D8DD23D00912218 /* simpleUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -176,14 +131,6 @@
 					130295EB2D8DD23D00912218 = {
 						CreatedOnToolsVersion = 16.2;
 					};
-					130295FB2D8DD23D00912218 = {
-						CreatedOnToolsVersion = 16.2;
-						TestTargetID = 130295EB2D8DD23D00912218;
-					};
-					130296052D8DD23D00912218 = {
-						CreatedOnToolsVersion = 16.2;
-						TestTargetID = 130295EB2D8DD23D00912218;
-					};
 				};
 			};
 			buildConfigurationList = 130295E72D8DD23D00912218 /* Build configuration list for PBXProject "simple" */;
@@ -195,34 +142,22 @@
 			);
 			mainGroup = 130295E32D8DD23D00912218;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				13C33C982D9111AC00A43391 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				13C33C9D2D9111BE00A43391 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 130295ED2D8DD23D00912218 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				130295EB2D8DD23D00912218 /* simple */,
-				130295FB2D8DD23D00912218 /* simpleTests */,
-				130296052D8DD23D00912218 /* simpleUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		130295EA2D8DD23D00912218 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		130295FA2D8DD23D00912218 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		130296042D8DD23D00912218 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -239,34 +174,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		130295F82D8DD23D00912218 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		130296022D8DD23D00912218 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		130295FE2D8DD23D00912218 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 130295EB2D8DD23D00912218 /* simple */;
-			targetProxy = 130295FD2D8DD23D00912218 /* PBXContainerItemProxy */;
-		};
-		130296082D8DD23D00912218 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 130295EB2D8DD23D00912218 /* simple */;
-			targetProxy = 130296072D8DD23D00912218 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1302960E2D8DD23D00912218 /* Debug */ = {
@@ -446,78 +354,6 @@
 			};
 			name = Release;
 		};
-		130296142D8DD23D00912218 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KC4666MKQR;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = recursive.ai.simpleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/simple.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/simple";
-			};
-			name = Debug;
-		};
-		130296152D8DD23D00912218 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KC4666MKQR;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = recursive.ai.simpleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/simple.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/simple";
-			};
-			name = Release;
-		};
-		130296172D8DD23D00912218 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KC4666MKQR;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = recursive.ai.simpleUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = simple;
-			};
-			name = Debug;
-		};
-		130296182D8DD23D00912218 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KC4666MKQR;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = recursive.ai.simpleUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = simple;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -539,25 +375,69 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		130296132D8DD23D00912218 /* Build configuration list for PBXNativeTarget "simpleTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				130296142D8DD23D00912218 /* Debug */,
-				130296152D8DD23D00912218 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		130296162D8DD23D00912218 /* Build configuration list for PBXNativeTarget "simpleUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				130296172D8DD23D00912218 /* Debug */,
-				130296182D8DD23D00912218 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		13C33C982D9111AC00A43391 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+		13C33C9D2D9111BE00A43391 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		13C33C992D9111AC00A43391 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 13C33C982D9111AC00A43391 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		13C33C9B2D9111AC00A43391 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 13C33C982D9111AC00A43391 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		13C33C9E2D9111BE00A43391 /* Auth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 13C33C9D2D9111BE00A43391 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Auth;
+		};
+		13C33CA02D9111BE00A43391 /* Functions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 13C33C9D2D9111BE00A43391 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Functions;
+		};
+		13C33CA22D9111BE00A43391 /* PostgREST */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 13C33C9D2D9111BE00A43391 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = PostgREST;
+		};
+		13C33CA42D9111BE00A43391 /* Realtime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 13C33C9D2D9111BE00A43391 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Realtime;
+		};
+		13C33CA62D9111BE00A43391 /* Storage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 13C33C9D2D9111BE00A43391 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Storage;
+		};
+		13C33CA82D9111D100A43391 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 13C33C9D2D9111BE00A43391 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 130295E42D8DD23D00912218 /* Project object */;
 }

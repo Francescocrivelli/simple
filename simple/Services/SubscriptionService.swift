@@ -170,7 +170,7 @@ class SubscriptionService: ObservableObject {
             
             if existingSubscriptions.isEmpty {
                 // Create new subscription record
-                let subscriptionData: [String: Encodable] = [
+                let subscriptionData: [String: Any] = [
                     "user_id": userId,
                     "product_id": transaction.productID,
                     "status": status,
@@ -183,7 +183,7 @@ class SubscriptionService: ObservableObject {
                     .execute()
             } else {
                 // Update existing subscription
-                let subscriptionData: [String: Encodable] = [
+                let subscriptionData: [String: Any] = [
                     "product_id": transaction.productID,
                     "status": status,
                     "expires_at": transaction.expirationDate as Any,
