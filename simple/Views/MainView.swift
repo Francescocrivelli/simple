@@ -102,11 +102,19 @@ struct MainView: View {
                     Button(action: {
                         showSubscriptionSheet = true
                     }) {
-                        Label("Subscription", systemImage: "creditcard")
+                        Label {
+                            Text("Subscription")
+                        } icon: {
+                            Image(systemName: "creditcard")
+                        }
                     }
                     
                     Button(action: signOut) {
-                        Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
+                        Label {
+                            Text("Sign Out")
+                        } icon: {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                        }
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
