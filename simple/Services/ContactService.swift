@@ -14,7 +14,10 @@ class ContactService: ObservableObject {
     
     // Fetch user's labels
     func fetchLabels() async throws {
-        guard let userId = supabase.auth.session?.user.id else {
+        let session = try await supabase.auth.session
+        let userId = session.user.id
+        
+        guard !userId.isEmpty else {
             throw AuthError.userNotFound
         }
         
@@ -39,12 +42,15 @@ class ContactService: ObservableObject {
     
     // Create a new label
     func createLabel(name: String) async throws -> Label {
-        guard let userId = supabase.auth.session?.user.id else {
+        let session = try await supabase.auth.session
+        let userId = session.user.id
+        
+        guard !userId.isEmpty else {
             throw AuthError.userNotFound
         }
         
         do {
-            let labelData = [
+            let labelData: [String: Encodable] = [
                 "user_id": userId,
                 "name": name
             ]
@@ -72,7 +78,10 @@ class ContactService: ObservableObject {
     
     // Fetch user's contacts
     func fetchContacts() async throws {
-        guard let userId = supabase.auth.session?.user.id else {
+        let session = try await supabase.auth.session
+        let userId = session.user.id
+        
+        guard !userId.isEmpty else {
             throw AuthError.userNotFound
         }
         
@@ -100,17 +109,20 @@ class ContactService: ObservableObject {
         // Extract contact info using AI
         let (name, phoneNumber, email, description) = try await aiService.extractContactInfo(from: input)
         
-        guard let userId = supabase.auth.session?.user.id,
+        let session = try await supabase.auth.session
+        let userId = session.user.id
+        
+        guard !userId.isEmpty,
               let unwrappedName = name ?? extractNameFromDescription(description) else {
             throw NSError(domain: "ContactService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Could not extract name from input"])
         }
         
         // Create contact in database
-        let contactData: [String: Any] = [
+        let contactData: [String: Encodable] = [
             "user_id": userId,
             "name": unwrappedName,
-            "phone_number": phoneNumber,
-            "email": email,
+            "phone_number": phoneNumber as Any,
+            "email": email as Any,
             "text_description": description ?? input
         ]
         
@@ -141,7 +153,7 @@ class ContactService: ObservableObject {
             
             // Add to system contacts if we have a phone number
             if let phoneNumber = phoneNumber {
-                try await addToSystemContacts(name: unwrappedName, phoneNumber: phoneNumber, email: email)
+                let _ = try await addToSystemContacts(name: unwrappedName, phoneNumber: phoneNumber, email: email)
                 
                 // Update contact with system ID
                 // This part would need implementation after handling system contacts
@@ -157,7 +169,7 @@ class ContactService: ObservableObject {
     
     // Assign a label to a contact
     func assignLabel(contactId: UUID, labelId: UUID) async throws {
-        let contactLabelData = [
+        let contactLabelData: [String: Encodable] = [
             "contact_id": contactId.uuidString,
             "label_id": labelId.uuidString
         ]
@@ -190,7 +202,10 @@ class ContactService: ObservableObject {
     
     // Search contacts using natural language
     func searchContacts(query: String) async throws -> [Contact] {
-        guard let userId = supabase.auth.session?.user.id else {
+        let session = try await supabase.auth.session
+        let userId = session.user.id
+        
+        guard !userId.isEmpty else {
             throw AuthError.userNotFound
         }
         
@@ -297,7 +312,10 @@ class ContactService: ObservableObject {
     }
     
     private func performContactSync() async throws {
-        guard let userId = supabase.auth.session?.user.id else {
+        let session = try await supabase.auth.session
+        let userId = session.user.id
+        
+        guard !userId.isEmpty else {
             throw AuthError.userNotFound
         }
         
@@ -346,11 +364,13 @@ class ContactService: ObservableObject {
                     
                     if existingContacts.isEmpty {
                         // Create new contact
-                        let contactData: [String: Any] = [
+                        let email = contact.emailAddresses.first?.value as String?
+                        
+                        let contactData: [String: Encodable] = [
                             "user_id": userId,
                             "name": name,
                             "phone_number": phoneNumber,
-                            "email": contact.emailAddresses.first?.value as String? ?? nil,
+                            "email": email as Any,
                             "system_contact_id": contact.identifier,
                             "text_description": "Imported from phone contacts"
                         ]
