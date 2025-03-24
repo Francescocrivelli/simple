@@ -102,17 +102,15 @@ struct MainView: View {
                     Button(action: {
                         showSubscriptionSheet = true
                     }) {
-                        Label {
+                        HStack {
                             Text("Subscription")
-                        } icon: {
                             Image(systemName: "creditcard")
                         }
                     }
                     
                     Button(action: signOut) {
-                        Label {
+                        HStack {
                             Text("Sign Out")
-                        } icon: {
                             Image(systemName: "rectangle.portrait.and.arrow.right")
                         }
                     }

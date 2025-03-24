@@ -152,7 +152,10 @@ class SubscriptionService: ObservableObject {
             let session = try await SupabaseService.shared.client.auth.session
             let userId = session.user.id
             
-            guard userId.count > 0 else {
+            // Convert UUID to string
+            let userIdString = userId.uuidString
+            
+            guard !userIdString.isEmpty else {
                 return
             }
             
@@ -160,7 +163,7 @@ class SubscriptionService: ObservableObject {
             let existingResponse = try await SupabaseService.shared.client
                 .from("app_subscriptions")
                 .select()
-                .eq("user_id", value: userId)
+                .eq("user_id", value: userIdString)
                 .execute()
             
             let isActive = await isSubscriptionActive(transaction: transaction)
@@ -168,17 +171,22 @@ class SubscriptionService: ObservableObject {
             
             // Decode using JSONDecoder
             let decoder = JSONDecoder()
-            if let responseData = try? existingResponse.data,
-               let existingSubscriptions = try? decoder.decode([AppSubscription].self, from: responseData) {
+            // data is not optional, use directly
+            let responseData = existingResponse.data
+            if let existingSubscriptions = try? decoder.decode([AppSubscription].self, from: responseData) {
                 
                 if existingSubscriptions.isEmpty {
                     // Create new subscription record
-                    let subscriptionData: [String: Any] = [
-                        "user_id": userId,
+                    var subscriptionData: [String: String] = [
+                        "user_id": userIdString,
                         "product_id": transaction.productID,
-                        "status": status,
-                        "expires_at": transaction.expirationDate != nil ? ISO8601DateFormatter().string(from: transaction.expirationDate!) : nil
-                    ] as [String: Any]
+                        "status": status
+                    ]
+                    
+                    // Add expiration date if available
+                    if let expirationDate = transaction.expirationDate {
+                        subscriptionData["expires_at"] = ISO8601DateFormatter().string(from: expirationDate)
+                    }
                     
                     try await SupabaseService.shared.client
                         .from("app_subscriptions")
@@ -186,17 +194,21 @@ class SubscriptionService: ObservableObject {
                         .execute()
                 } else {
                     // Update existing subscription
-                    let subscriptionData: [String: Any] = [
+                    var subscriptionData: [String: String] = [
                         "product_id": transaction.productID,
                         "status": status,
-                        "expires_at": transaction.expirationDate != nil ? ISO8601DateFormatter().string(from: transaction.expirationDate!) : nil,
                         "updated_at": ISO8601DateFormatter().string(from: Date())
-                    ] as [String: Any]
+                    ]
+                    
+                    // Add expiration date if available
+                    if let expirationDate = transaction.expirationDate {
+                        subscriptionData["expires_at"] = ISO8601DateFormatter().string(from: expirationDate)
+                    }
                     
                     try await SupabaseService.shared.client
                         .from("app_subscriptions")
                         .update(subscriptionData)
-                        .eq("user_id", value: userId)
+                        .eq("user_id", value: userIdString)
                         .execute()
                 }
             }

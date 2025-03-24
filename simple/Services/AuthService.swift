@@ -56,38 +56,38 @@ class AuthService: ObservableObject {
             let session = try await supabase.auth.session
             let userId = session.user.id
             
-            if let uuid = UUID(uuidString: userId) {
-                // Fetch user data
-                let userData = try await supabase
-                    .from("users")
-                    .select()
-                    .eq("id", value: uuid.uuidString)
-                    .single()
-                    .execute()
-                
-                // Fetch user preferences
-                let userPrefs = try await supabase
-                    .from("user_preferences")
-                    .select()
-                    .eq("user_id", value: uuid.uuidString)
-                    .single()
-                    .execute()
-                
-                await MainActor.run {
-                    do {
-                        let decoder = JSONDecoder()
-                        if let userDataJson = try? userData.data,
-                           let user = try? decoder.decode(User.self, from: userDataJson) {
-                            self.currentUser = user
-                        }
-                        
-                        if let userPrefsJson = try? userPrefs.data,
-                           let prefs = try? decoder.decode(UserPreferences.self, from: userPrefsJson) {
-                            self.userPreferences = prefs
-                        }
-                    } catch {
-                        print("Error decoding user data: \(error)")
+            // No conversion to UUID, use userId string directly
+            // Fetch user data
+            let userData = try await supabase
+                .from("users")
+                .select()
+                .eq("id", value: userId)
+                .single()
+                .execute()
+            
+            // Fetch user preferences
+            let userPrefs = try await supabase
+                .from("user_preferences")
+                .select()
+                .eq("user_id", value: userId)
+                .single()
+                .execute()
+            
+            await MainActor.run {
+                let decoder = JSONDecoder()
+                do {
+                    // data is not optional, so we don't need if let
+                    let userDataJson = userData.data
+                    if let user = try? decoder.decode(User.self, from: userDataJson) {
+                        self.currentUser = user
                     }
+                    
+                    let userPrefsJson = userPrefs.data
+                    if let prefs = try? decoder.decode(UserPreferences.self, from: userPrefsJson) {
+                        self.userPreferences = prefs
+                    }
+                } catch {
+                    print("Error decoding user data: \(error)")
                 }
             }
         } catch {
@@ -110,7 +110,8 @@ class AuthService: ObservableObject {
             )
             
             // Check if user exists in the response
-            if !authResponse.user.id.isEmpty {
+            let userIdString = authResponse.user.id.uuidString
+            if !userIdString.isEmpty {
                 await fetchUserData()
                 await MainActor.run {
                     self.isAuthenticated = true
@@ -139,7 +140,8 @@ class AuthService: ObservableObject {
             )
             
             // Check if user exists in the response
-            if !authResponse.user.id.isEmpty {
+            let userIdString = authResponse.user.id.uuidString
+            if !userIdString.isEmpty {
                 await fetchUserData()
                 await MainActor.run {
                     self.isAuthenticated = true
@@ -176,16 +178,20 @@ class AuthService: ObservableObject {
         let session = try await supabase.auth.session
         let userId = session.user.id
         
-        guard !userId.isEmpty else {
+        // Get string from UUID
+        let userIdString = userId.uuidString
+        
+        guard !userIdString.isEmpty else {
             throw AuthError.userNotFound
         }
         
         do {
-            let preferences: [String: Any] = [
-                "user_id": userId,
-                "has_completed_onboarding": false,
-                "has_synced_contacts": false
-            ] as [String: Any]
+            // Use a dictionary with strong types for Encodable conformance
+            let preferences: [String: String] = [
+                "user_id": userIdString,
+                "has_completed_onboarding": "false",
+                "has_synced_contacts": "false"
+            ]
             
             try await supabase
                 .from("user_preferences")
@@ -200,18 +206,19 @@ class AuthService: ObservableObject {
     }
     
     func updateUserPreferences(hasCompletedOnboarding: Bool? = nil, hasSyncedContacts: Bool? = nil) async throws {
-        guard !userPreferences?.id.uuidString.isEmpty ?? true else {
+        guard let preferencesId = userPreferences?.id.uuidString, !preferencesId.isEmpty else {
             throw AuthError.userNotFound
         }
         
-        var updates: [String: Any] = [:] as [String: Any]
+        // Use a strongly typed dictionary instead of Any
+        var updates: [String: String] = [:]
         
         if let hasCompletedOnboarding = hasCompletedOnboarding {
-            updates["has_completed_onboarding"] = hasCompletedOnboarding
+            updates["has_completed_onboarding"] = hasCompletedOnboarding ? "true" : "false"
         }
         
         if let hasSyncedContacts = hasSyncedContacts {
-            updates["has_synced_contacts"] = hasSyncedContacts
+            updates["has_synced_contacts"] = hasSyncedContacts ? "true" : "false"
         }
         
         if updates.isEmpty {
@@ -222,7 +229,7 @@ class AuthService: ObservableObject {
             try await supabase
                 .from("user_preferences")
                 .update(updates)
-                .eq("id", value: userPreferences?.id.uuidString)
+                .eq("id", value: preferencesId)
                 .execute()
             
             await fetchUserData()

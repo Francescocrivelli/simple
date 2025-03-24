@@ -17,7 +17,10 @@ class ContactService: ObservableObject {
         let session = try await supabase.auth.session
         let userId = session.user.id
         
-        guard !userId.isEmpty else {
+        // Convert UUID to string
+        let userIdString = userId.uuidString
+        
+        guard !userIdString.isEmpty else {
             throw AuthError.userNotFound
         }
         
@@ -25,14 +28,17 @@ class ContactService: ObservableObject {
             let response = try await supabase
                 .from("labels")
                 .select()
-                .eq("user_id", value: userId)
+                .eq("user_id", value: userIdString)
                 .order("name")
                 .execute()
             
-            let fetchedLabels = try response.decoded() as [Label]
-            
-            await MainActor.run {
-                self.labels = fetchedLabels
+            let decoder = JSONDecoder()
+            // data is not optional, use directly
+            let responseData = response.data
+            if let fetchedLabels = try? decoder.decode([Label].self, from: responseData) {
+                await MainActor.run {
+                    self.labels = fetchedLabels
+                }
             }
         } catch {
             print("Error fetching labels: \(error)")
@@ -45,13 +51,16 @@ class ContactService: ObservableObject {
         let session = try await supabase.auth.session
         let userId = session.user.id
         
-        guard !userId.isEmpty else {
+        // Convert UUID to string
+        let userIdString = userId.uuidString
+        
+        guard !userIdString.isEmpty else {
             throw AuthError.userNotFound
         }
         
         do {
-            let labelData: [String: Encodable] = [
-                "user_id": userId,
+            let labelData: [String: String] = [
+                "user_id": userIdString,
                 "name": name
             ]
             
@@ -62,14 +71,19 @@ class ContactService: ObservableObject {
                 .single()
                 .execute()
             
-            let newLabel = try response.decoded() as Label
-            
-            await MainActor.run {
-                self.labels.append(newLabel)
-                self.labels.sort { $0.name < $1.name }
+            let decoder = JSONDecoder()
+            // data is not optional, use directly
+            let responseData = response.data
+            if let newLabel = try? decoder.decode(Label.self, from: responseData) {
+                await MainActor.run {
+                    self.labels.append(newLabel)
+                    self.labels.sort { $0.name < $1.name }
+                }
+                
+                return newLabel
+            } else {
+                throw NSError(domain: "ContactService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Failed to decode label"])
             }
-            
-            return newLabel
         } catch {
             print("Error creating label: \(error)")
             throw error
@@ -81,7 +95,10 @@ class ContactService: ObservableObject {
         let session = try await supabase.auth.session
         let userId = session.user.id
         
-        guard !userId.isEmpty else {
+        // Convert UUID to string
+        let userIdString = userId.uuidString
+        
+        guard !userIdString.isEmpty else {
             throw AuthError.userNotFound
         }
         
@@ -89,14 +106,17 @@ class ContactService: ObservableObject {
             let response = try await supabase
                 .from("contacts")
                 .select("*, labels(*)")
-                .eq("user_id", value: userId)
+                .eq("user_id", value: userIdString)
                 .order("created_at", ascending: false)
                 .execute()
             
-            let fetchedContacts = try response.decoded() as [Contact]
-            
-            await MainActor.run {
-                self.contacts = fetchedContacts
+            let decoder = JSONDecoder()
+            // data is not optional, use directly
+            let responseData = response.data
+            if let fetchedContacts = try? decoder.decode([Contact].self, from: responseData) {
+                await MainActor.run {
+                    self.contacts = fetchedContacts
+                }
             }
         } catch {
             print("Error fetching contacts: \(error)")
@@ -112,19 +132,30 @@ class ContactService: ObservableObject {
         let session = try await supabase.auth.session
         let userId = session.user.id
         
-        guard !userId.isEmpty,
+        // Convert UUID to string
+        let userIdString = userId.uuidString
+        
+        guard !userIdString.isEmpty,
               let unwrappedName = name ?? extractNameFromDescription(description) else {
             throw NSError(domain: "ContactService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Could not extract name from input"])
         }
         
         // Create contact in database
-        let contactData: [String: Encodable] = [
-            "user_id": userId,
+        // Create a properly typed dictionary with only String values for Encodable conformance
+        var contactData: [String: String] = [
+            "user_id": userIdString,
             "name": unwrappedName,
-            "phone_number": phoneNumber as Any,
-            "email": email as Any,
             "text_description": description ?? input
         ]
+        
+        // Only add optional fields if they exist
+        if let phoneNumber = phoneNumber {
+            contactData["phone_number"] = phoneNumber
+        }
+        
+        if let email = email {
+            contactData["email"] = email
+        }
         
         do {
             // Insert contact
@@ -135,7 +166,12 @@ class ContactService: ObservableObject {
                 .single()
                 .execute()
             
-            var newContact = try response.decoded() as Contact
+            let decoder = JSONDecoder()
+            // data is not optional, use directly
+            let responseData = response.data
+            guard var newContact = try? decoder.decode(Contact.self, from: responseData) else {
+                throw NSError(domain: "ContactService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Failed to decode contact"])
+            }
             
             // Suggest labels
             if let description = description, !description.isEmpty {
@@ -159,7 +195,7 @@ class ContactService: ObservableObject {
                 // This part would need implementation after handling system contacts
             }
             
-            await fetchContacts() // Refresh contacts list
+            try await fetchContacts() // Refresh contacts list
             return newContact
         } catch {
             print("Error creating contact: \(error)")
@@ -169,7 +205,7 @@ class ContactService: ObservableObject {
     
     // Assign a label to a contact
     func assignLabel(contactId: UUID, labelId: UUID) async throws {
-        let contactLabelData: [String: Encodable] = [
+        let contactLabelData: [String: String] = [
             "contact_id": contactId.uuidString,
             "label_id": labelId.uuidString
         ]
@@ -205,7 +241,10 @@ class ContactService: ObservableObject {
         let session = try await supabase.auth.session
         let userId = session.user.id
         
-        guard !userId.isEmpty else {
+        // Convert UUID to string
+        let userIdString = userId.uuidString
+        
+        guard !userIdString.isEmpty else {
             throw AuthError.userNotFound
         }
         
@@ -214,14 +253,18 @@ class ContactService: ObservableObject {
             let directResponse = try await supabase
                 .from("contacts")
                 .select("*, labels(*)")
-                .eq("user_id", value: userId)
+                .eq("user_id", value: userIdString)
                 .or("name.ilike.%\(query)%,text_description.ilike.%\(query)%,phone_number.ilike.%\(query)%,email.ilike.%\(query)%")
                 .execute()
             
-            let directResults = try directResponse.decoded() as [Contact]
-            
-            if !directResults.isEmpty {
-                return directResults
+            let decoder = JSONDecoder()
+            // data is not optional, use directly
+            let responseData = directResponse.data
+            if let directResults = try? decoder.decode([Contact].self, from: responseData) {
+                
+                if !directResults.isEmpty {
+                    return directResults
+                }
             }
         } catch {
             print("Error in direct search: \(error)")
@@ -315,7 +358,10 @@ class ContactService: ObservableObject {
         let session = try await supabase.auth.session
         let userId = session.user.id
         
-        guard !userId.isEmpty else {
+        // Convert UUID to string
+        let userIdString = userId.uuidString
+        
+        guard !userIdString.isEmpty else {
             throw AuthError.userNotFound
         }
         
@@ -356,29 +402,37 @@ class ContactService: ObservableObject {
                     let existingResponse = try await supabase
                         .from("contacts")
                         .select()
-                        .eq("user_id", value: userId)
+                        .eq("user_id", value: userIdString)
                         .eq("phone_number", value: phoneNumber)
                         .execute()
                     
-                    let existingContacts = try existingResponse.decoded() as [Contact]
-                    
-                    if existingContacts.isEmpty {
-                        // Create new contact
-                        let email = contact.emailAddresses.first?.value as String?
+                    let decoder = JSONDecoder()
+                    // data is not optional, use directly
+                    let responseData = existingResponse.data
+                    if let existingContacts = try? decoder.decode([Contact].self, from: responseData) {
                         
-                        let contactData: [String: Encodable] = [
-                            "user_id": userId,
-                            "name": name,
-                            "phone_number": phoneNumber,
-                            "email": email as Any,
-                            "system_contact_id": contact.identifier,
-                            "text_description": "Imported from phone contacts"
-                        ]
-                        
-                        try await supabase
-                            .from("contacts")
-                            .insert(contactData)
-                            .execute()
+                        if existingContacts.isEmpty {
+                            // Create new contact
+                            let email = contact.emailAddresses.first?.value as String?
+                            
+                            var contactData: [String: String] = [
+                                "user_id": userIdString,
+                                "name": name,
+                                "phone_number": phoneNumber,
+                                "system_contact_id": contact.identifier,
+                                "text_description": "Imported from phone contacts"
+                            ]
+                            
+                            // Add email if available
+                            if let email = email {
+                                contactData["email"] = email
+                            }
+                            
+                            try await supabase
+                                .from("contacts")
+                                .insert(contactData)
+                                .execute()
+                        }
                     }
                 }
             }
