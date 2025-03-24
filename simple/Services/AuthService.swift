@@ -185,7 +185,7 @@ class AuthService: ObservableObject {
                 "user_id": userId,
                 "has_completed_onboarding": false,
                 "has_synced_contacts": false
-            ]
+            ] as [String: Any]
             
             try await supabase
                 .from("user_preferences")
@@ -204,7 +204,7 @@ class AuthService: ObservableObject {
             throw AuthError.userNotFound
         }
         
-        var updates: [String: Any] = [:]
+        var updates: [String: Any] = [:] as [String: Any]
         
         if let hasCompletedOnboarding = hasCompletedOnboarding {
             updates["has_completed_onboarding"] = hasCompletedOnboarding

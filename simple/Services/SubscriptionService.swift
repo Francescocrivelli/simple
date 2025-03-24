@@ -152,7 +152,7 @@ class SubscriptionService: ObservableObject {
             let session = try await SupabaseService.shared.client.auth.session
             let userId = session.user.id
             
-            guard !userId.isEmpty else {
+            guard userId.count > 0 else {
                 return
             }
             
@@ -166,35 +166,39 @@ class SubscriptionService: ObservableObject {
             let isActive = await isSubscriptionActive(transaction: transaction)
             let status = isActive ? "active" : "expired"
             
-            let existingSubscriptions = try existingResponse.decoded() as [AppSubscription]
-            
-            if existingSubscriptions.isEmpty {
-                // Create new subscription record
-                let subscriptionData: [String: Any] = [
-                    "user_id": userId,
-                    "product_id": transaction.productID,
-                    "status": status,
-                    "expires_at": transaction.expirationDate as Any
-                ]
+            // Decode using JSONDecoder
+            let decoder = JSONDecoder()
+            if let responseData = try? existingResponse.data,
+               let existingSubscriptions = try? decoder.decode([AppSubscription].self, from: responseData) {
                 
-                try await SupabaseService.shared.client
-                    .from("app_subscriptions")
-                    .insert(subscriptionData)
-                    .execute()
-            } else {
-                // Update existing subscription
-                let subscriptionData: [String: Any] = [
-                    "product_id": transaction.productID,
-                    "status": status,
-                    "expires_at": transaction.expirationDate as Any,
-                    "updated_at": Date()
-                ]
-                
-                try await SupabaseService.shared.client
-                    .from("app_subscriptions")
-                    .update(subscriptionData)
-                    .eq("user_id", value: userId)
-                    .execute()
+                if existingSubscriptions.isEmpty {
+                    // Create new subscription record
+                    let subscriptionData: [String: Any] = [
+                        "user_id": userId,
+                        "product_id": transaction.productID,
+                        "status": status,
+                        "expires_at": transaction.expirationDate != nil ? ISO8601DateFormatter().string(from: transaction.expirationDate!) : nil
+                    ] as [String: Any]
+                    
+                    try await SupabaseService.shared.client
+                        .from("app_subscriptions")
+                        .insert(subscriptionData)
+                        .execute()
+                } else {
+                    // Update existing subscription
+                    let subscriptionData: [String: Any] = [
+                        "product_id": transaction.productID,
+                        "status": status,
+                        "expires_at": transaction.expirationDate != nil ? ISO8601DateFormatter().string(from: transaction.expirationDate!) : nil,
+                        "updated_at": ISO8601DateFormatter().string(from: Date())
+                    ] as [String: Any]
+                    
+                    try await SupabaseService.shared.client
+                        .from("app_subscriptions")
+                        .update(subscriptionData)
+                        .eq("user_id", value: userId)
+                        .execute()
+                }
             }
         } catch {
             print("Error updating subscription in database: \(error)")
