@@ -27,8 +27,11 @@ class AuthService: ObservableObject {
     func checkSession() {
         Task {
             do {
+                // Get session and check if it's valid
                 let session = try await supabase.auth.session
-                if session != nil {
+                let hasValidSession = session.accessToken.isEmpty == false
+                
+                if hasValidSession {
                     await fetchUserData()
                     await MainActor.run {
                         self.isAuthenticated = true
@@ -49,9 +52,11 @@ class AuthService: ObservableObject {
     
     func fetchUserData() async {
         do {
-            let user = try await supabase.auth.session?.user
+            // Get the current user from the session
+            let session = try await supabase.auth.session
+            let userId = session.user.id
             
-            if let userId = user?.id, let uuid = UUID(uuidString: userId) {
+            if let uuid = UUID(uuidString: userId) {
                 // Fetch user data
                 let userData = try await supabase
                     .from("users")
@@ -101,7 +106,8 @@ class AuthService: ObservableObject {
                 )
             )
             
-            if let _ = authResponse.user {
+            // Check if user exists in the response
+            if authResponse.user.id.isEmpty == false {
                 await fetchUserData()
                 await MainActor.run {
                     self.isAuthenticated = true
@@ -129,7 +135,8 @@ class AuthService: ObservableObject {
                 )
             )
             
-            if let _ = authResponse.user {
+            // Check if user exists in the response
+            if authResponse.user.id.isEmpty == false {
                 await fetchUserData()
                 await MainActor.run {
                     self.isAuthenticated = true
@@ -163,12 +170,15 @@ class AuthService: ObservableObject {
     }
     
     private func createUserPreferences() async throws {
-        guard let userId = supabase.auth.session?.user.id else {
+        let session = try await supabase.auth.session
+        let userId = session.user.id
+        
+        guard !userId.isEmpty else {
             throw AuthError.userNotFound
         }
         
         do {
-            let preferences = [
+            let preferences: [String: Encodable] = [
                 "user_id": userId,
                 "has_completed_onboarding": false,
                 "has_synced_contacts": false
@@ -191,7 +201,7 @@ class AuthService: ObservableObject {
             throw AuthError.userNotFound
         }
         
-        var updates: [String: Any] = [:]
+        var updates: [String: Encodable] = [:]
         
         if let hasCompletedOnboarding = hasCompletedOnboarding {
             updates["has_completed_onboarding"] = hasCompletedOnboarding
