@@ -1,24 +1,28 @@
-//
-//  ContentView.swift
-//  simple
-//
-//  Created by Francesco Crivelli on 3/21/25.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject private var authService: AuthService
+    @EnvironmentObject private var subscriptionService: SubscriptionService
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world is second !")
+        Group {
+            if authService.isAuthenticated {
+                if let preferences = authService.userPreferences, preferences.hasCompletedOnboarding == true {
+                    MainView()
+                } else {
+                    OnboardingView()
+                }
+            } else {
+                AuthView()
+            }
         }
-        .padding()
     }
 }
 
-#Preview {
-    ContentView()
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+            .environmentObject(AuthService.shared)
+            .environmentObject(SubscriptionService.shared)
+    }
 }
